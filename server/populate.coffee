@@ -61,7 +61,7 @@ populateDatabase = (commentClass, postClass, personClass, tagClass) ->
 
 Meteor.methods
   'peerdb-populate-database': ->
-    populateDatabase Comment.document, Post.document, Person.document, Tag.document
+    populateDatabase Comment.documents, Post.documents, Person.documents, Tag.documents
 
   'collections-populate-database': ->
     populateDatabase commentsCollection, postsCollection, personsCollection, tagsCollection
