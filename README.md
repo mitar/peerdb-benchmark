@@ -4,4 +4,6 @@ This branch consists of Python programs:
    * without PeerDB help
  * to read from MongoDB database
    * using recursive MongoDB queries
+     * reading related documents iteratively
+     * reading related documents in bulk
    * using embedded documents made by PeerDB
