@@ -4,6 +4,7 @@ import config
 import sys
 import json
 import string
+import ddp
 
 def char_generator(size=6, chars=string.ascii_uppercase + string.digits):
 	return ''.join(random.choice(chars) for _ in range(size))
@@ -50,8 +51,12 @@ def main(args):
 	POST_BODY_SIZE = param['SIZE']['POST_BODY']
 	COMMENT_BODY_SIZE = param['SIZE']['COMMENT_BODY']
 
-	client = MongoClient(config.DATABASE_LOCATION) 
+	client = MongoClient(config.DATABASE_LOCATION)
 	db = client[config.DATABASE_NAME]
+
+	meteor = ddp.ConcurrentDDPClient(config.METEOR_LOCATION)
+
+	meteor.start()
 
 	print "Dropping collections"
 
@@ -59,6 +64,22 @@ def main(args):
 	db.Tags.drop()
 	db.Posts.drop()
 	db.Comments.drop()
+
+	print "Waiting for database"
+
+	future = meteor.call('wait-for-database')
+
+	result_message = future.get()
+	if result_message.has_error():
+		print "Meteor error:", result_message.error
+		return
+
+	future = meteor.call('reset-observe-callback-count')
+
+	result_message = future.get()
+	if result_message.has_error():
+		print "Meteor error:", result_message.error
+		return
 
 	print "Adding collections"
 
@@ -116,8 +137,23 @@ def main(args):
 			})
 	comment_ids = comment_collection.insert(comments)
 
+	print "Waiting for database"
+
+	future = meteor.call('wait-for-database')
+	result_message = future.get()
+	if result_message.has_error():
+		print "Meteor error:", result_message.error
+		return
+	else:
+		print result_message.result, "PeerDB updates made"
+
 	print "Confirming things inserted:", \
 		len(person_ids), len(tag_ids), len(post_ids), len(comment_ids)
+
+	print "Disconnecting from Meteor (this might take quite some time, feel free to kill the program)"
+
+	meteor.stop()
+	meteor.join()
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
