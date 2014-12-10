@@ -5,7 +5,7 @@ This branch consists of Python programs:
  * to read from MongoDB database
    * using recursive MongoDB queries
      * reading related documents iteratively
-     * reading related documents in bulk
+     * TODO: reading related documents in bulk
    * using embedded documents made by PeerDB
 
 How to make it work: 
