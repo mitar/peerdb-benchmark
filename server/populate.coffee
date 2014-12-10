@@ -6,7 +6,7 @@ NUMBER_OF_POSTS = 1000
 NUMBER_OF_TAGS_PER_POST = 10
 NUMBER_OF_COMMENTS = 10000
 
-# This timeout should be substracted when timinig the full wait period.
+# This timeout should be subtracted when timing the full wait period.
 WAIT_FOR_DATABASE_TIMEOUT = 2500 # ms
 
 observerCallbackCalledFutures = []
