@@ -21,5 +21,6 @@ How to run:
   * install requirements in requirements.txt
   * modify config.py to reflect your database information
   * python create_tables.py
-  * python populate.py
+  * python populate.py <parameter json here>
+    * sample_parameters.json is included: python populate.py sample_parameters.json
   * python query.py

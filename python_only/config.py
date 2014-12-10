@@ -1,7 +1,1 @@
 DATABASE_INFO = "dbname='python_db' user='apavel' password='' host='localhost'"
-
-NUMBER_OF_PERSONS = 100
-NUMBER_OF_TAGS = 100
-NUMBER_OF_POSTS = 1000
-NUMBER_OF_TAGS_PER_POST = 10
-NUMBER_OF_COMMENTS = 10000
