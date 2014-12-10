@@ -10,15 +10,22 @@ def char_generator(size=6, chars=string.ascii_uppercase + string.digits):
 
 # input: ordered objects, object_ids, fields to embed besides id, n
 # output: peerdb compatible objects to embed
-def random_objects(objects, object_ids, fields, n): 
-	object_ids = random.sample(object_ids, n)
+def random_objects(objects, object_ids, fields, n):
+	assert len(objects) == len(object_ids)
+	len_objects = len(objects)
+
 	out = []
-	for i in range(len(object_ids)):
-		obj = {'_id': object_ids[i]}
-		for field in fields: 
-			obj[field] = objects[i][field]
+	for i in range(n):
+		object_i = random.randrange(len_objects)
+		obj = {'_id': object_ids[object_i]}
+		for field in fields:
+			obj[field] = objects[object_i][field]
 		out.append(obj)
+
 	return out
+
+def random_id():
+	return char_generator(17)
 
 def main(args): 
 	if not args: 
@@ -35,40 +42,40 @@ def main(args):
 	NUMBER_OF_TAGS_PER_POST = param['NUMBER']['TAGS_PER_POST']
 	NUMBER_OF_COMMENTS = param['NUMBER']['COMMENTS']
 
-	PERSON_NAME = char_generator(param['SIZE']['PERSON_NAME'])
-	PERSON_BIO = char_generator(param['SIZE']['PERSON_BIO'])
-	PERSON_PICTURE = char_generator(param['SIZE']['PERSON_PICTURE'])
-	TAG_NAME = char_generator(param['SIZE']['TAG_NAME'])
-	TAG_DESCRIPTION = char_generator(param['SIZE']['TAG_DESCRIPTION'])
-	POST_BODY = char_generator(param['SIZE']['POST_BODY'])
-	COMMENT_BODY = char_generator(param['SIZE']['COMMENT_BODY'])
+	PERSON_NAME_SIZE = param['SIZE']['PERSON_NAME']
+	PERSON_BIO_SIZE = param['SIZE']['PERSON_BIO']
+	PERSON_PICTURE_SIZE = param['SIZE']['PERSON_PICTURE']
+	TAG_NAME_SIZE = param['SIZE']['TAG_NAME']
+	TAG_DESCRIPTION_SIZE = param['SIZE']['TAG_DESCRIPTION']
+	POST_BODY_SIZE = param['SIZE']['POST_BODY']
+	COMMENT_BODY_SIZE = param['SIZE']['COMMENT_BODY']
 
 	client = MongoClient(config.DATABASE_LOCATION) 
 	db = client[config.DATABASE_NAME]
 
 	print "Dropping collections"
 
-	db.person.drop()
-	db.tag.drop()
-	db.post.drop()
-	db.comment.drop()
+	db.Persons.drop()
+	db.Tags.drop()
+	db.Posts.drop()
+	db.Comments.drop()
 
 	print "Adding collections"
 
-	person_collection = db['person']
-	tag_collection = db['tag']
-	post_collection = db['post']
-	comment_collection = db['comment']
+	person_collection = db['Persons']
+	tag_collection = db['Tags']
+	post_collection = db['Posts']
+	comment_collection = db['Comments']
 
 	print "Adding", NUMBER_OF_PERSONS, "persons"
 
 	persons = []
-	for person in range(NUMBER_OF_PERSONS): 
-		# TODO: Add picture
+	for person in range(NUMBER_OF_PERSONS):
 		persons.append({
-			"name": PERSON_NAME, 
-			"bio": PERSON_BIO,
-			"picture": PERSON_PICTURE
+			"_id": random_id(),
+			"name": char_generator(PERSON_NAME_SIZE),
+			"bio": char_generator(PERSON_BIO_SIZE),
+			"picture": char_generator(PERSON_PICTURE_SIZE)
 			})
 	person_ids = person_collection.insert(persons)
 
@@ -77,20 +84,21 @@ def main(args):
 	tags = []
 	for i in range(NUMBER_OF_TAGS): 
 		tags.append({
-			"name": TAG_NAME,
-			"description": TAG_DESCRIPTION
+			"_id": random_id(),
+			"name": char_generator(TAG_NAME_SIZE),
+			"description": char_generator(TAG_DESCRIPTION_SIZE)
 			})
 	tag_ids = tag_collection.insert(tags)
 
-
-	print "Adding", NUMBER_OF_POSTS,"posts"
+	print "Adding", NUMBER_OF_POSTS, "posts"
 
 	posts = []
 	for i in range(NUMBER_OF_POSTS): 
 		posts.append({
+			'_id': random_id(),
 			'author': random_objects(persons, person_ids, ['name', 'picture'], 1)[0],
-			'body': POST_BODY,
-			'tags': random_objects(tags, tag_ids, ['name'], NUMBER_OF_TAGS_PER_POST)
+			'body': char_generator(POST_BODY_SIZE),
+			'tags': random_objects(tags, tag_ids, ['name', 'description'], NUMBER_OF_TAGS_PER_POST)
 			})
 	post_ids = post_collection.insert(posts)
 
@@ -99,8 +107,12 @@ def main(args):
 	comments = []
 	for i in range(NUMBER_OF_COMMENTS): 
 		comments.append({
-			"body": COMMENT_BODY,
-			"post": random.choice(post_ids)
+			"_id": random_id(),
+			"body": char_generator(COMMENT_BODY_SIZE),
+			"post": {
+				# TODO: We should use here some long-tail distribution (20% of posts has 80% of comments)
+				'_id': random.choice(post_ids),
+				}
 			})
 	comment_ids = comment_collection.insert(comments)
 
