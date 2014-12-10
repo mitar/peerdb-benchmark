@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from benchmark.models import *
 import random
+import time
 
 class Command(BaseCommand): 
 	# this is a sample of what the query method could be, not really sure of what it should be
@@ -12,20 +13,32 @@ class Command(BaseCommand):
 		# put tags in random order
 		rtags = random.sample(tags, len(tags))
 
-		count = 0
+		start = time.time()
+		
+		print "Querying"
 		for tag in rtags: 
 
-			# get posts for that tag
+			# query for tag posts
 			posts = Post.objects.filter(tags__pk=tag.pk)
 
-			# for each post get body
-			post_bodies = [post.body for post in posts]
-
-			# for each post get all comment bodies
+			# query for post comments
 			comments = [[comment.body for comment in Comment.objects.filter(post=post)] for post in posts]
 
-			# for each post get author name
-			authors = [post.author.name for post in posts]
+			# get posts' author's names
+			authors = [post.author for post in posts]
 
-			count+=1
-			if count%10 == 0: print "Done with",count,"tags"
+			# get posts' tags names
+			tags = [[tag.name for tag in post.tags] for post in posts]
+
+			# to check that we have everything we need
+			out = []
+			for i in range(len(posts)): 
+				out.append({
+					'body': posts[i].body,
+					'author_name': authors[i].name,
+					'author_pic': authors[i].picture
+					'comments': comments[i],
+					'tags': tags[i]
+					})
+
+		print "Elapsed time", time.time()-start

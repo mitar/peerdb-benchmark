@@ -1,8 +1,9 @@
 # 2nd answer for virtualenv 
 # http://stackoverflow.com/questions/20170895/mac-virtualenv-pip-postgresql-error-pg-config-executable-not-found
 import psycopg2
+import config
 
-conn=psycopg2.connect("dbname='python_db' user='apavel' password='' host='localhost'")
+conn= psycopg2.connect(config.DATABASE_INFO)
 cur = conn.cursor()
 
 print "Droping tables if they exist" 
@@ -15,7 +16,7 @@ cur.execute("DROP TABLE IF EXISTS person;")
 print "Creating tables"
 # create person table
 # TODO: add picture
-cur.execute("CREATE TABLE person (person_id serial PRIMARY KEY, name text, bio text);")
+cur.execute("CREATE TABLE person (person_id serial PRIMARY KEY, name text, bio text, picture text);")
 
 # create tag table
 cur.execute("CREATE TABLE tag (tag_id serial PRIMARY KEY, name text, description text);")
