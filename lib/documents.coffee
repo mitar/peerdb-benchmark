@@ -2,7 +2,7 @@
 
 class @Person extends Document
   # name
-  # username
+  # picture
   # bio
 
   @Meta
@@ -24,8 +24,8 @@ class @Post extends Document
   @Meta
     name: 'Post'
     fields: =>
-      author: @ReferenceField Person
-      tags: [@ReferenceField Tag]
+      author: @ReferenceField Person, ['name', 'picture']
+      tags: [@ReferenceField Tag, ['name', 'description']]
 
 class @Comment extends Document
   # body
@@ -34,4 +34,4 @@ class @Comment extends Document
   @Meta
     name: 'Comment'
     fields: =>
-      post: @ReferenceField Post, [], true, 'comments'
+      post: @ReferenceField Post, [], true, 'comments', ['body']
