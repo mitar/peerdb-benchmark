@@ -1,4 +1,4 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING
 import random
 import config
 import sys
@@ -87,6 +87,9 @@ def main(args):
 	tag_collection = db['Tags']
 	post_collection = db['Posts']
 	comment_collection = db['Comments']
+
+	tag_collection.ensure_index([('name', ASCENDING)])
+	post_collection.ensure_index([('tags.name', ASCENDING)])
 
 	print "Adding", NUMBER_OF_PERSONS, "persons"
 
