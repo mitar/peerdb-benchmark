@@ -1,6 +1,12 @@
 from pymongo import MongoClient
 import random
 import config
+import sys
+import json
+import string
+
+def char_generator(size=6, chars=string.ascii_uppercase + string.digits):
+	return ''.join(random.choice(chars) for _ in range(size))
 
 # input: ordered objects, object_ids, fields to embed besides id, n
 # output: peerdb compatible objects to embed
@@ -14,67 +20,92 @@ def random_objects(objects, object_ids, fields, n):
 		out.append(obj)
 	return out
 
-client = MongoClient(config.DATABASE_LOCATION) 
-db = client[config.DATABASE_NAME]
+def main(args): 
+	if not args: 
+		print "Supply parameter json file: python populate.py sample_parameters.json"
+		exit(-1)
 
-print "Dropping collections"
+	f = open(args[0])
+	param = json.load(f)
+	f.close()
 
-db.person.drop()
-db.tag.drop()
-db.post.drop()
-db.comment.drop()
+	NUMBER_OF_PERSONS = param['NUMBER']['PERSONS']
+	NUMBER_OF_TAGS = param['NUMBER']['TAGS']
+	NUMBER_OF_POSTS = param['NUMBER']['POSTS']
+	NUMBER_OF_TAGS_PER_POST = param['NUMBER']['TAGS_PER_POST']
+	NUMBER_OF_COMMENTS = param['NUMBER']['COMMENTS']
 
-print "Adding collections"
+	PERSON_NAME = char_generator(param['SIZE']['PERSON_NAME'])
+	PERSON_BIO = char_generator(param['SIZE']['PERSON_BIO'])
+	PERSON_PICTURE = char_generator(param['SIZE']['PERSON_PICTURE'])
+	TAG_NAME = char_generator(param['SIZE']['TAG_NAME'])
+	TAG_DESCRIPTION = char_generator(param['SIZE']['TAG_DESCRIPTION'])
+	POST_BODY = char_generator(param['SIZE']['POST_BODY'])
+	COMMENT_BODY = char_generator(param['SIZE']['COMMENT_BODY'])
 
-person_collection = db['person']
-tag_collection = db['tag']
-post_collection = db['post']
-comment_collection = db['comment']
+	client = MongoClient(config.DATABASE_LOCATION) 
+	db = client[config.DATABASE_NAME]
 
-print "Adding", config.NUMBER_OF_PERSONS, "persons"
+	print "Dropping collections"
 
-persons = []
-for person in range(config.NUMBER_OF_PERSONS): 
-	# TODO: Add picture
-	persons.append({
-		"name": "name", 
-		"bio": "bio",
-		"picture": "picture"
-		})
-person_ids = person_collection.insert(persons)
+	db.person.drop()
+	db.tag.drop()
+	db.post.drop()
+	db.comment.drop()
 
-print "Adding", config.NUMBER_OF_TAGS, "tags"
+	print "Adding collections"
 
-tags = []
-for i in range(config.NUMBER_OF_TAGS): 
-	tags.append({
-		"name": "name",
-		"description": "description"
-		})
-tag_ids = tag_collection.insert(tags)
+	person_collection = db['person']
+	tag_collection = db['tag']
+	post_collection = db['post']
+	comment_collection = db['comment']
+
+	print "Adding", NUMBER_OF_PERSONS, "persons"
+
+	persons = []
+	for person in range(NUMBER_OF_PERSONS): 
+		# TODO: Add picture
+		persons.append({
+			"name": PERSON_NAME, 
+			"bio": PERSON_BIO,
+			"picture": PERSON_PICTURE
+			})
+	person_ids = person_collection.insert(persons)
+
+	print "Adding", NUMBER_OF_TAGS, "tags"
+
+	tags = []
+	for i in range(NUMBER_OF_TAGS): 
+		tags.append({
+			"name": TAG_NAME,
+			"description": TAG_DESCRIPTION
+			})
+	tag_ids = tag_collection.insert(tags)
 
 
-print "Adding", config.NUMBER_OF_POSTS,"posts"
+	print "Adding", NUMBER_OF_POSTS,"posts"
 
-posts = []
-for i in range(config.NUMBER_OF_POSTS): 
-	posts.append({
-		'author': random_objects(persons, person_ids, ['name', 'picture'], 1)[0],
-		'body': 'body',
-		'tags': random_objects(tags, tag_ids, ['name'], config.NUMBER_OF_TAGS_PER_POST)
-		})
-post_ids = post_collection.insert(posts)
-print posts[0]
+	posts = []
+	for i in range(NUMBER_OF_POSTS): 
+		posts.append({
+			'author': random_objects(persons, person_ids, ['name', 'picture'], 1)[0],
+			'body': POST_BODY,
+			'tags': random_objects(tags, tag_ids, ['name'], NUMBER_OF_TAGS_PER_POST)
+			})
+	post_ids = post_collection.insert(posts)
 
-print "Adding", config.NUMBER_OF_COMMENTS, "comments"
+	print "Adding", NUMBER_OF_COMMENTS, "comments"
 
-comments = []
-for i in range(config.NUMBER_OF_COMMENTS): 
-	comments.append({
-		"body": "body",
-		"post": random.choice(post_ids)
-		})
-comment_ids = comment_collection.insert(comments)
+	comments = []
+	for i in range(NUMBER_OF_COMMENTS): 
+		comments.append({
+			"body": COMMENT_BODY,
+			"post": random.choice(post_ids)
+			})
+	comment_ids = comment_collection.insert(comments)
 
-print "Confirming things inserted:", \
-	len(person_ids), len(tag_ids), len(post_ids), len(comment_ids)
+	print "Confirming things inserted:", \
+		len(person_ids), len(tag_ids), len(post_ids), len(comment_ids)
+
+if __name__ == '__main__':
+	main(sys.argv[1:])

@@ -16,8 +16,9 @@ How to make it work:
   * change DATABASE_NAME
   * change DATABASE_LOCATION
 * To populate database: 
-  * No peerdb: python no-peerdb/populate.py
-  * With peerdb: python peerdb/populate.py
+  * No peerdb: python no-peerdb/populate.py <path to parameter json>
+  * With peerdb: python peerdb/populate.py <path to parameter json>
+  * sample parameter json saved as "sample_parameters.json"
 * To query database (only iterative reading for now)
   * No peerdb: python no-peerdb/query.py
   * With peerdb: python peerdb/query.py
