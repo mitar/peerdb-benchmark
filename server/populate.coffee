@@ -6,7 +6,30 @@ NUMBER_OF_POSTS = 1000
 NUMBER_OF_TAGS_PER_POST = 10
 NUMBER_OF_COMMENTS = 10000
 
-WAIT_FOR_DATABASE_TIMEOUT = 1000 # ms
+# This timeout should be substracted when timinig the full wait period.
+WAIT_FOR_DATABASE_TIMEOUT = 2500 # ms
+
+observerCallbackCalledFutures = []
+
+observerCallbackCalled = _.debounce ->
+  futures = observerCallbackCalledFutures
+  observerCallbackCalledFutures = []
+  for future in futures when not future.isResolved()
+    future.return()
+,
+  WAIT_FOR_DATABASE_TIMEOUT
+
+originalObserverCallback = null
+unless originalObserverCallback
+  originalObserverCallback = Document._observerCallback
+  Document._observerCallback = (f) ->
+    originalObserverCallback (args...) ->
+      observerCallbackCalled()
+      ret = f args...
+      observerCallbackCalled()
+      ret
+
+Document._observerCallback
 
 populateDatabase = (commentClass, postClass, personClass, tagClass) ->
   console.log "Cleaning the database"
@@ -70,33 +93,11 @@ Meteor.methods
     console.log "Waiting for database"
 
     future = new Future()
+    observerCallbackCalledFutures.push future
 
-    timeout = null
-    newTimeout = ->
-      Meteor.clearTimeout timeout if timeout
-      timeout = Meteor.setTimeout ->
-        timeout = null
-        future.return() unless future.isResolved()
-      , WAIT_FOR_DATABASE_TIMEOUT
-    newTimeout()
-
-    handles = []
-
-    for document in Document.list
-      do (document) ->
-        initializing = true
-        handles.push document.documents.find({}).observeChanges
-          added: (id, fields) ->
-            newTimeout() unless initializing
-          changed: (id, fields) ->
-            newTimeout()
-          removed: (id) ->
-            newTimeout()
-        initializing = false
+    # We make sure it is called at least once.
+    observerCallbackCalled()
 
     future.wait()
-
-    for handle in handles
-      handle.stop()
 
     console.log "Done"
