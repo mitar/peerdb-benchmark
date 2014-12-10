@@ -14,7 +14,8 @@ class Post(models.Model):
 	author = models.ForeignKey(Person)
 	tags = models.ManyToManyField(Tag)
 	body = models.TextField()
+	# comments: related name for Comment.post
 
 class Comment(models.Model): 
 	body = models.TextField()
-	post = models.ForeignKey(Post)
+	post = models.ForeignKey(Post, related_name='comments')
