@@ -2,6 +2,18 @@ from pymongo import MongoClient
 import random
 import config
 
+# input: ordered objects, object_ids, fields to embed besides id, n
+# output: peerdb compatible objects to embed
+def random_objects(objects, object_ids, fields, n): 
+	object_ids = random.sample(object_ids, n)
+	out = []
+	for i in range(len(object_ids)):
+		obj = {'_id': object_ids[i]}
+		for field in fields: 
+			obj[field] = objects[i][field]
+		out.append(obj)
+	return out
+
 client = MongoClient(config.DATABASE_LOCATION) 
 db = client[config.DATABASE_NAME]
 
@@ -47,11 +59,12 @@ print "Adding", config.NUMBER_OF_POSTS,"posts"
 posts = []
 for i in range(config.NUMBER_OF_POSTS): 
 	posts.append({
-		'author': random.choice(person_ids),
+		'author': random_objects(persons, person_ids, ['name', 'picture'], 1)[0],
 		'body': 'body',
-		'tags': random.sample(tag_ids, config.NUMBER_OF_TAGS_PER_POST)
+		'tags': random_objects(tags, tag_ids, ['name'], config.NUMBER_OF_TAGS_PER_POST)
 		})
 post_ids = post_collection.insert(posts)
+print posts[0]
 
 print "Adding", config.NUMBER_OF_COMMENTS, "comments"
 
@@ -63,3 +76,5 @@ for i in range(config.NUMBER_OF_COMMENTS):
 		})
 comment_ids = comment_collection.insert(comments)
 
+print "Confirming things inserted:", \
+	len(person_ids), len(tag_ids), len(post_ids), len(comment_ids)
