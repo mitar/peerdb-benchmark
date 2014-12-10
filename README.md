@@ -13,7 +13,7 @@ How to run:
   	* open django_project/django_project/settings.py
   	* update information in DATABASES field to reflect your database
   * cd django_project/
-  * to populate run "python manage.py populate"
+  * to populate run "python manage.py populate <absolute path to parameter json>"
   * to query run "python manage.py query"
 
 * Python only
