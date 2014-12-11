@@ -39,7 +39,7 @@ def main(args):
 
 	start = time.time()
 	persons = []
-	for person in range(NUMBER_OF_PERSONS): 
+	for i in range(NUMBER_OF_PERSONS):
 		persons.append({
 			"name": char_generator(PERSON_NAME_SIZE),
 			"bio": char_generator(PERSON_BIO_SIZE),

@@ -7,7 +7,7 @@ class Person(models.Model):
 	bio = models.TextField()
 
 class Tag(models.Model): 
-	name = models.TextField()
+	name = models.TextField(db_index=True)
 	description = models.TextField()
 
 class Post(models.Model): 

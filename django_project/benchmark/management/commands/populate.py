@@ -3,18 +3,18 @@ from benchmark.models import *
 import random
 import json
 import string
-import sys
 import time
 
+def char_generator(size=6, chars=string.ascii_uppercase + string.digits):
+	return ''.join(random.choice(chars) for _ in range(size))
+
 class Command(BaseCommand): 
-	help = "populates database according to populate.coffee"
+	help = "populates the database"
 
 	def handle(self, *args, **options):
+		if not args:
+			raise CommandError("Supply parameter json file")
 
-		def char_generator(size=6, chars=string.ascii_uppercase + string.digits):
-			return ''.join(random.choice(chars) for _ in range(size))
-
-		sys.stderr.write("Setting parameters\n")
 		f = open(args[0])
 		param = json.load(f)
 		f.close()
@@ -25,65 +25,95 @@ class Command(BaseCommand):
 		NUMBER_OF_TAGS_PER_POST = param['NUMBER']['TAGS_PER_POST']
 		NUMBER_OF_COMMENTS = param['NUMBER']['COMMENTS']
 
-		PERSON_NAME = char_generator(param['SIZE']['PERSON_NAME'])
-		PERSON_BIO = char_generator(param['SIZE']['PERSON_BIO'])
-		PERSON_PICTURE = char_generator(param['SIZE']['PERSON_PICTURE'])
-		TAG_NAME = char_generator(param['SIZE']['TAG_NAME'])
-		TAG_DESCRIPTION = char_generator(param['SIZE']['TAG_DESCRIPTION'])
-		POST_BODY = char_generator(param['SIZE']['POST_BODY'])
-		COMMENT_BODY = char_generator(param['SIZE']['COMMENT_BODY'])
-		
-		sys.stderr.write("Cleaning the database\n")
+		PERSON_NAME_SIZE = param['SIZE']['PERSON_NAME']
+		PERSON_BIO_SIZE = param['SIZE']['PERSON_BIO']
+		PERSON_PICTURE_SIZE = param['SIZE']['PERSON_PICTURE']
+		TAG_NAME_SIZE = param['SIZE']['TAG_NAME']
+		TAG_DESCRIPTION_SIZE = param['SIZE']['TAG_DESCRIPTION']
+		POST_BODY_SIZE = param['SIZE']['POST_BODY']
+		COMMENT_BODY_SIZE = param['SIZE']['COMMENT_BODY']
+
+		self.stderr.write("Cleaning the database\n")
 
 		Comment.objects.all().delete()
 		Post.objects.all().delete()
 		Tag.objects.all().delete()
 		Person.objects.all().delete()
 
-		sys.stderr.write("Done\n")
+		self.stderr.write("Done\n")
 
-		sys.stderr.write("Adding "+str(NUMBER_OF_PERSONS)+" persons\n")
+		self.stderr.write("Adding "+str(NUMBER_OF_PERSONS)+" persons\n")
 
 		start = time.time()
 
-		for i in range(NUMBER_OF_PERSONS): 
-			person = Person(name=PERSON_NAME, picture=PERSON_PICTURE, bio=PERSON_BIO)
-			person.save()
+		persons = []
+		for i in range(NUMBER_OF_PERSONS):
+			persons.append(Person(
+				name=char_generator(PERSON_NAME_SIZE),
+				picture=char_generator(PERSON_BIO_SIZE),
+				bio=char_generator(PERSON_PICTURE_SIZE)
+				))
+		Person.objects.bulk_create(persons)
 
-		sys.stderr.write("Adding "+str(NUMBER_OF_TAGS)+" tags\n")
+		self.stderr.write("Adding "+str(NUMBER_OF_TAGS)+" tags\n")
 
-		for i in range(NUMBER_OF_TAGS): 
-			tag = Tag(name=TAG_NAME, description=TAG_DESCRIPTION)
-			tag.save()
+		tags = []
+		for i in range(NUMBER_OF_TAGS):
+			tags.append(Tag(
+				name=char_generator(TAG_NAME_SIZE),
+				description=char_generator(TAG_DESCRIPTION_SIZE)
+				))
+		Tag.objects.bulk_create(tags)
 
-		sys.stderr.write("Adding "+str(NUMBER_OF_POSTS)+" posts\n")
+		self.stderr.write("Getting person ID's so far\n")
 
-		persons = Person.objects.all()
-		tags = Tag.objects.all()
-		for i in range(NUMBER_OF_POSTS): 
-			post = Post(author=random.choice(persons), body=POST_BODY)
-			# has to have primary key before creating many-to-many
-			post.save()
+		person_ids = Person.objects.all().values_list('id', flat=True)
+
+		self.stderr.write("Getting tag ID's so far\n")
+
+		tag_ids = Tag.objects.all().values_list('id', flat=True)
+
+		self.stderr.write("Adding "+str(NUMBER_OF_POSTS)+" posts\n")
+
+		posts = []
+		for i in range(NUMBER_OF_POSTS):
+			posts.append(Post(
+				author_id=random.choice(person_ids),
+				body=char_generator(POST_BODY_SIZE)
+				))
+		Post.objects.bulk_create(posts)
+
+		post_ids = []
+
+		self.stderr.write("Adding "+str(NUMBER_OF_TAGS_PER_POST)+" tags per post\n")
+
+		for post in Post.objects.all().only('id'):
+			post_ids.append(post.id)
 
 			# adding randomly sampled tags to the post
-			rtags = random.sample(tags, NUMBER_OF_TAGS_PER_POST)
-			for tag in rtags: 
-				post.tags.add(tag)
+			tag_sample = random.sample(tag_ids, NUMBER_OF_TAGS_PER_POST)
+
+			for tag_id in tag_sample:
+				post.tags.add(tag_id)
 
 			# saving post after tags added
 			post.save()
 
-		sys.stderr.write("Adding "+str(NUMBER_OF_COMMENTS)+" comments\n")
+		assert len(post_ids) == len(posts)
 
+		self.stderr.write("Adding "+str(NUMBER_OF_COMMENTS)+" comments\n")
 
-		posts = Post.objects.all()
-		for i in range(NUMBER_OF_COMMENTS): 
-			comment = Comment(body=COMMENT_BODY, post=random.choice(posts))
-			comment.save()
-		sys.stderr.write("Done\n")
+		comments = []
+		for i in range(NUMBER_OF_COMMENTS):
+			comments.append(Comment(
+				body=char_generator(COMMENT_BODY_SIZE),
+				# TODO: We should use here some long-tail distribution (20% of posts has 80% of comments)
+				post_id=random.choice(post_ids)
+				))
+		Comment.objects.bulk_create(comments)
 
-		print time.time() - start
-		
-			
+		#self.stderr.write("Getting comment ID's so far\n")
 
+		#comment_ids = Comment.objects.all().values_list('id', flat=True)
 
+		self.stdout.write(str(time.time()-start)+"\n")
