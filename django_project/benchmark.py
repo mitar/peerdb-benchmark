@@ -20,15 +20,13 @@ def main(args):
 		sbp.call(['python', ABSOLUTE_PATH+'manage.py', 'syncdb', '--noinput', '--no-color'])
 
 		print "Populating"
-		with open(os.devnull, 'w') as FNULL:
-			t = sbp.check_output(['python', ABSOLUTE_PATH+'manage.py', 'populate', '--no-color', json_fn], stderr=FNULL)
+		t = sbp.check_output(['python', ABSOLUTE_PATH+'manage.py', 'populate', '--no-color', json_fn], stderr=sys.stderr)
 
 		with open(populate_out_fn, "a") as populate_file:
 			populate_file.write(json_fn + ' ' + str(t))
 
 		print "Querying"
-		with open(os.devnull, 'w') as FNULL:
-			t = sbp.check_output(['python', ABSOLUTE_PATH+'manage.py', 'query', '--no-color'], stderr=FNULL)
+		t = sbp.check_output(['python', ABSOLUTE_PATH+'manage.py', 'query', '--no-color'], stderr=sys.stderr)
 
 		with open(query_out_fn, "a") as query_file:
 			query_file.write(json_fn + ' ' + str(t))
