@@ -1,44 +1,37 @@
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand
 from benchmark.models import *
-import random
 import time
-import sys
 
 class Command(BaseCommand): 
-	# this is a sample of what the query method could be, not really sure of what it should be
-	help = "Simulates showing all posts(+ comment bodies and author name) for all tags"
+	help = "Query and benchmark the database"
 
 	def handle(self, *args, **options):
-		tags = Tag.objects.all()
+		self.stderr.write("Checking collection counts\n")
 
-		# put tags in random order
-		rtags = random.sample(tags, len(tags))
+		persons_count = Person.objects.all().count()
+		tags_count = Tag.objects.all().count()
+		posts_count = Post.objects.all().count()
+		comments_count = Comment.objects.all().count()
+
+		self.stderr.write(' '.join(["Persons:", str(persons_count), "Tags:", str(tags_count),
+		"Posts:", str(posts_count), "Comments:", str(comments_count)]) + '\n')
+
+		self.stderr.write("Querying all posts and content for each tag\n")
 
 		start = time.time()
-		
-		for tag in rtags: 
 
-			# query for tag posts
-			posts = Post.objects.filter(tags__pk=tag.pk)
-
-			# query for post comments
-			comments = [[comment.body for comment in Comment.objects.filter(post=post)] for post in posts]
-
-			# get posts' author's names
-			authors = [post.author for post in posts]
-
-			# get posts' tags names
-			tags = [[tag.name for tag in post.tags] for post in posts]
-
-			# to check that we have everything we need
-			out = []
-			for i in range(len(posts)): 
-				out.append({
-					'body': posts[i].body,
-					'author_name': authors[i].name,
-					'author_pic': authors[i].picture,
-					'comments': comments[i],
-					'tags': tags[i]
+		# iterate over all tags
+		# we pretend that tag name is the only thing we have to begin with
+		for cur_tag_name in Tag.objects.all().values_list('name', flat=True):
+			tp_contents = []
+			for post in Post.objects.filter(tags__name__exact=cur_tag_name):
+				tp_contents.append({
+					'body': post.body,
+					'comments': [comment.body for comment in post.comments.all()],
+					'author_name': post.author.name,
+					'author_picture': post.author.picture,
+					'tags_name': [tag.name for tag in post.tags.all()],
+					'tags_description': [tag.description for tag in post.tags.all()]
 					})
 
-		print time.time()-start
+		self.stdout.write(str(time.time()-start)+"\n")
