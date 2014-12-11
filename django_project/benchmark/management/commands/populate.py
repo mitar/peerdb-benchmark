@@ -3,6 +3,8 @@ from benchmark.models import *
 import random
 import json
 import string
+import sys
+import time
 
 class Command(BaseCommand): 
 	help = "populates database according to populate.coffee"
@@ -12,7 +14,7 @@ class Command(BaseCommand):
 		def char_generator(size=6, chars=string.ascii_uppercase + string.digits):
 			return ''.join(random.choice(chars) for _ in range(size))
 
-		print "Setting parameters"
+		sys.stderr.write("Setting parameters\n")
 		f = open(args[0])
 		param = json.load(f)
 		f.close()
@@ -31,28 +33,30 @@ class Command(BaseCommand):
 		POST_BODY = char_generator(param['SIZE']['POST_BODY'])
 		COMMENT_BODY = char_generator(param['SIZE']['COMMENT_BODY'])
 		
-		print "Cleaning the database"
+		sys.stderr.write("Cleaning the database\n")
 
 		Comment.objects.all().delete()
 		Post.objects.all().delete()
 		Tag.objects.all().delete()
 		Person.objects.all().delete()
 
-		print "Done"
+		sys.stderr.write("Done\n")
 
-		print "Adding", NUMBER_OF_PERSONS, "persons"
+		sys.stderr.write("Adding "+str(NUMBER_OF_PERSONS)+" persons\n")
+
+		start = time.time()
 
 		for i in range(NUMBER_OF_PERSONS): 
 			person = Person(name=PERSON_NAME, picture=PERSON_PICTURE, bio=PERSON_BIO)
 			person.save()
 
-		print "Adding", NUMBER_OF_TAGS, "tags"
+		sys.stderr.write("Adding "+str(NUMBER_OF_TAGS)+" tags\n")
 
 		for i in range(NUMBER_OF_TAGS): 
 			tag = Tag(name=TAG_NAME, description=TAG_DESCRIPTION)
 			tag.save()
 
-		print "Adding", NUMBER_OF_POSTS,"posts"
+		sys.stderr.write("Adding "+str(NUMBER_OF_POSTS)+" posts\n")
 
 		persons = Person.objects.all()
 		tags = Tag.objects.all()
@@ -69,14 +73,17 @@ class Command(BaseCommand):
 			# saving post after tags added
 			post.save()
 
-		print "Adding", NUMBER_OF_COMMENTS, "comments"
+		sys.stderr.write("Adding "+str(NUMBER_OF_COMMENTS)+" comments\n")
+
 
 		posts = Post.objects.all()
 		for i in range(NUMBER_OF_COMMENTS): 
 			comment = Comment(body=COMMENT_BODY, post=random.choice(posts))
 			comment.save()
+		sys.stderr.write("Done\n")
 
-		print "Done"
+		print time.time() - start
+		
 			
 
 
