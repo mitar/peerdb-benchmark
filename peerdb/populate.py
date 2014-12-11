@@ -155,6 +155,7 @@ def main(args):
 
 	meteor.stop()
 	meteor.join()
+	# 3 seconds is overhead made by wait-for-database
 	print time.time() - start - 3
 
 if __name__ == '__main__':
