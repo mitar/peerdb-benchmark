@@ -6,7 +6,7 @@ import sys
 def main(args): 
 	
 	if len(args) < 4: 
-		sys.stderr.write("Format is generate_jsons.py <base_json_fn> <out_path> <type> <value 1> <value 2> ...")
+		sys.stderr.write("Format is generate_jsons.py <base_json_fn> <out_path> <type> <value 1> <value 2> ...\n")
 		exit(-1)
 
 	in_file = open(args[0])
@@ -28,7 +28,7 @@ def main(args):
 				in_json["SIZE"][var] = value
 
 			# save json for each value with all relevant variables changed
-			out_file = open(out_path + str(var_type) + str(value) + '.json', 'w')
+			out_file = open(out_path + str(var_type.lower()) + '_' + str(value) + '.json', 'w')
 			json.dump(in_json, out_file)
 			out_file.close()
 
@@ -42,7 +42,7 @@ def main(args):
 				in_json['NUMBER'][var] = in_json['NUMBER'][var]*value
 
 			# save json for each value with all relevant variables changed
-			out_file = open(out_path + str(var_type) + str(value) + '.json', 'w')
+			out_file = open(out_path + str(var_typ.lower()) + '_' + str(value) + '.json', 'w')
 			json.dump(in_json, out_file)
 			out_file.close()
 
