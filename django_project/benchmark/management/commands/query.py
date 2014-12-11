@@ -2,6 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from benchmark.models import *
 import random
 import time
+import sys
 
 class Command(BaseCommand): 
 	# this is a sample of what the query method could be, not really sure of what it should be
@@ -15,7 +16,6 @@ class Command(BaseCommand):
 
 		start = time.time()
 		
-		print "Querying"
 		for tag in rtags: 
 
 			# query for tag posts
@@ -36,9 +36,9 @@ class Command(BaseCommand):
 				out.append({
 					'body': posts[i].body,
 					'author_name': authors[i].name,
-					'author_pic': authors[i].picture
+					'author_pic': authors[i].picture,
 					'comments': comments[i],
 					'tags': tags[i]
 					})
 
-		print "Elapsed time", time.time()-start
+		print time.time()-start

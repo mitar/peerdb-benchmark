@@ -2,6 +2,7 @@ import psycopg2
 import random
 import config
 import time
+import sys
 
 conn=psycopg2.connect(config.DATABASE_INFO)
 cur = conn.cursor()
@@ -14,7 +15,7 @@ tag_ids = cur.fetchall()
 tag_ids = random.sample(tag_ids, len(tag_ids))
 
 start = time.time()
-print "Querying"
+sys.stderr.write("Querying\n")
 for tag_id in tag_ids: 
 
 	# join for tag queries
@@ -64,7 +65,7 @@ for tag_id in tag_ids:
 			'author_pic': authors[i][1]
 			})
 
-print "Elapsed time", time.time()-start
+print time.time()-start
 
 conn.commit()
 cur.close()
