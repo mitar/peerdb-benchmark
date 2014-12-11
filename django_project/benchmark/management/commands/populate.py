@@ -9,7 +9,7 @@ def char_generator(size=6, chars=string.ascii_uppercase + string.digits):
 	return ''.join(random.choice(chars) for _ in range(size))
 
 class Command(BaseCommand): 
-	help = "populates the database"
+	help = "Populates the database."
 
 	def handle(self, *args, **options):
 		if not args:

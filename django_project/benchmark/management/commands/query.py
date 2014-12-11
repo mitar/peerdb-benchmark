@@ -3,7 +3,7 @@ from benchmark.models import *
 import time
 
 class Command(BaseCommand): 
-	help = "Query and benchmark the database"
+	help = "Query and benchmark the database."
 
 	def handle(self, *args, **options):
 		self.stderr.write("Checking collection counts\n")
