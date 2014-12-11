@@ -31,7 +31,7 @@ def random_id():
 
 def main(args): 
 	if not args: 
-		sys.stderr.write("Supply parameter json file: python populate.py sample_parameters.json\n")
+		sys.stderr.write("Supply parameter json file\n")
 		exit(-1)
 
 	f = open(args[0])

@@ -37,4 +37,5 @@ for tag in tags.find({}, {'name': 1}):
 			"tags_name": [tag['name'] for tag in post['tags']],
 			"tags_description": [tag['description'] for tag in post['tags']],
 			})
+
 print time.time()-start
