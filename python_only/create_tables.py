@@ -3,7 +3,7 @@
 import psycopg2
 import config
 
-conn= psycopg2.connect(config.DATABASE_INFO)
+conn = psycopg2.connect(config.DATABASE_INFO)
 cur = conn.cursor()
 
 print "Droping tables if they exist" 
@@ -15,11 +15,11 @@ cur.execute("DROP TABLE IF EXISTS person;")
 
 print "Creating tables"
 # create person table
-# TODO: add picture
 cur.execute("CREATE TABLE person (person_id serial PRIMARY KEY, name text, bio text, picture text);")
 
 # create tag table
-cur.execute("CREATE TABLE tag (tag_id serial PRIMARY KEY, name text, description text);")
+cur.execute("CREATE TABLE tag (tag_id serial PRIMARY KEY, name VARCHAR(255), description text);")
+cur.execute("CREATE INDEX ON tag (name);")
 
 # create post table
 cur.execute("CREATE TABLE post (post_id serial PRIMARY KEY, \
