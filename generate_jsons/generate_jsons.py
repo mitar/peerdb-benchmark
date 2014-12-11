@@ -42,7 +42,7 @@ def main(args):
 				in_json['NUMBER'][var] = in_json['NUMBER'][var]*value
 
 			# save json for each value with all relevant variables changed
-			out_file = open(out_path + str(var_typ.lower()) + '_' + str(value) + '.json', 'w')
+			out_file = open(out_path + str(var_type.lower()) + '_' + str(value) + '.json', 'w')
 			json.dump(in_json, out_file)
 			out_file.close()
 
