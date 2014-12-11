@@ -14,11 +14,9 @@ def char_generator(size=6, chars=string.ascii_uppercase + string.digits):
 # output: peerdb compatible objects to embed
 def random_objects(objects, object_ids, fields, n):
 	assert len(objects) == len(object_ids)
-	len_objects = len(objects)
 
 	out = []
-	for i in range(n):
-		object_i = random.randrange(len_objects)
+	for object_i in random.sample(xrange(len(objects)), n):
 		obj = {'_id': object_ids[object_i]}
 		for field in fields:
 			obj[field] = objects[object_i][field]
@@ -155,7 +153,7 @@ def main(args):
 
 	meteor.stop()
 	meteor.join()
-	# 3 seconds is overhead made by wait-for-database
+	# we subtract 3 seconds, an overhead made by wait-for-database
 	print time.time() - start - 3
 
 if __name__ == '__main__':
