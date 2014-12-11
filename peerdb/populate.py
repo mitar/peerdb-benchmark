@@ -149,12 +149,13 @@ def main(args):
 	else:
 		sys.stderr.write(str(result_message.result) + " PeerDB updates made\n")
 
+	# we subtract 3 seconds, an overhead made by wait-for-database
+	print time.time() - start - 3
+
 	sys.stderr.write("Disconnecting from Meteor (this might take quite some time, feel free to kill the program)\n")
 
 	meteor.stop()
 	meteor.join()
-	# we subtract 3 seconds, an overhead made by wait-for-database
-	print time.time() - start - 3
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
