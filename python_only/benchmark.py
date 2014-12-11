@@ -20,15 +20,13 @@ def main(args):
 		sbp.call(['python', ABSOLUTE_PATH+'create_tables.py'])
 
 		print "Populating"
-		with open(os.devnull, 'w') as FNULL:
-			t = sbp.check_output(['python', ABSOLUTE_PATH+'populate.py', json_fn], stderr=FNULL)
+		t = sbp.check_output(['python', ABSOLUTE_PATH+'populate.py', json_fn], stderr=sys.stderr)
 
 		with open(populate_out_fn, "a") as populate_file:
 			populate_file.write(json_fn + ' ' + str(t))
 
 		print "Querying"
-		with open(os.devnull, 'w') as FNULL:
-			t = sbp.check_output(['python', ABSOLUTE_PATH+'query.py'], stderr=FNULL)
+		t = sbp.check_output(['python', ABSOLUTE_PATH+'query2.py'], stderr=sys.stderr)
 
 		with open(query_out_fn, "a") as query_file:
 			query_file.write(json_fn + ' ' + str(t))
