@@ -4,13 +4,14 @@ import config
 import sys
 import json
 import string
+import time
 
 def char_generator(size=6, chars=string.ascii_uppercase + string.digits):
 	return ''.join(random.choice(chars) for _ in range(size))
 
 def main(args): 
 	if not args: 
-		print "Supply parameter json file: python populate.py sample_parameters.json"
+		sys.stderr.write("Supply parameter json file\n")
 		exit(-1)
 
 	f = open(args[0])
@@ -34,8 +35,9 @@ def main(args):
 	conn = psycopg2.connect(config.DATABASE_INFO)
 	cur = conn.cursor()
 	
-	print "Adding", NUMBER_OF_PERSONS, "persons"
+	sys.stderr.write("Adding "+str(NUMBER_OF_PERSONS)+" persons\n")
 
+	start = time.time()
 	persons = []
 	for person in range(NUMBER_OF_PERSONS): 
 		persons.append({
@@ -45,7 +47,7 @@ def main(args):
 			})
 	cur.executemany("""INSERT INTO person(name, bio, picture) VALUES (%(name)s, %(bio)s, %(picture)s)""", persons)
 
-	print "Adding", NUMBER_OF_TAGS, "tags"
+	sys.stderr.write("Adding "+str(NUMBER_OF_TAGS)+" tags\n")
 
 	tags = []
 	for i in range(NUMBER_OF_TAGS): 
@@ -55,17 +57,15 @@ def main(args):
 			})
 	cur.executemany("""INSERT INTO tag(name, description) VALUES (%(name)s, %(description)s)""", tags)
 
-	print "Getting person ID's so far" 
+	sys.stderr.write("Getting person ID's so far\n")
 	cur.execute("""SELECT person_id from person""")
 	person_ids = cur.fetchall()
-	print "First 5 person ID's", person_ids[:5]
 
-	print "Getting tag ID's so far" 
+	sys.stderr.write("Getting tag ID's so far\n")
 	cur.execute("""SELECT tag_id from tag""")
 	tag_ids = cur.fetchall()
-	print "First 5 tag ID's", tag_ids[:5]
 
-	print "Adding", NUMBER_OF_POSTS, "posts"
+	sys.stderr.write("Adding "+str(NUMBER_OF_POSTS)+" posts\n")
 
 	posts = []
 	for i in range(NUMBER_OF_POSTS): 
@@ -75,12 +75,11 @@ def main(args):
 			})
 	cur.executemany("""INSERT INTO post(author, body) VALUES (%(author)s, %(body)s)""", posts)
 
-	print "Getting post ID's so far" 
+	sys.stderr.write("Getting post ID's so far\n")
 	cur.execute("""SELECT post_id from post""")
 	post_ids = cur.fetchall()
-	print "First 5 post ID's", post_ids[:5]
 
-	print "Adding", NUMBER_OF_TAGS_PER_POST, "tags per post"
+	sys.stderr.write("Adding "+str(NUMBER_OF_TAGS_PER_POST)+" tags per post\n")
 
 	post_tags = []
 	for post_id in post_ids: 
@@ -93,7 +92,7 @@ def main(args):
 				})
 	cur.executemany("""INSERT INTO post_tag(post_id, tag_id) VALUES (%(post_id)s, %(tag_id)s)""", post_tags)
 
-	print "Adding", NUMBER_OF_COMMENTS, "comments"
+	sys.stderr.write("Adding "+str(NUMBER_OF_COMMENTS)+" comments\n")
 
 	comments = []
 	for i in range(NUMBER_OF_COMMENTS): 
@@ -104,13 +103,11 @@ def main(args):
 			})
 	cur.executemany("""INSERT INTO comment(body, post) VALUES (%(body)s, %(post)s)""", comments)
 
-	print "Getting comment ID's so far"
-	cur.execute("""SELECT comment_id from comment""")
-	comment_ids = cur.fetchall()
-	print "First 5 comment ID's", comment_ids[:5]
+	print time.time()-start
 
-	print "Confirming things inserted:", \
-		len(person_ids), len(tag_ids), len(post_ids), len(comment_ids)
+	# sys.stderr.write("Getting comment ID's so far\n")
+	# cur.execute("""SELECT comment_id from comment""")
+	# comment_ids = cur.fetchall()
 
 	conn.commit()
 	cur.close()
