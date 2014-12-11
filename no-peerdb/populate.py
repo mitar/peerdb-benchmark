@@ -76,7 +76,7 @@ def main(args):
 			})
 	tag_ids = tag_collection.insert(tags)
 
-	print "Adding", NUMBER_OF_POSTS,"posts"
+	print "Adding", NUMBER_OF_POSTS, "posts"
 
 	posts = []
 	for i in range(NUMBER_OF_POSTS): 
@@ -105,4 +105,3 @@ def main(args):
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
-
