@@ -1,72 +1,87 @@
 import psycopg2
-import random
 import config
 import time
 import sys
 
 conn=psycopg2.connect(config.DATABASE_INFO)
+tags_cur = conn.cursor()
 cur = conn.cursor()
 
-# get all tags
-cur.execute("""SELECT tag_id from tag""")
-tag_ids = cur.fetchall()
+sys.stderr.write("Checking collection counts\n")
 
-# put tag ids into random order
-tag_ids = random.sample(tag_ids, len(tag_ids))
+cur.execute("""SELECT COUNT(*) from person""")
+persons_count = cur.fetchone()[0]
+cur.execute("""SELECT COUNT(*) from tag""")
+tags_count = cur.fetchone()[0]
+cur.execute("""SELECT COUNT(*) from post""")
+posts_count = cur.fetchone()[0]
+cur.execute("""SELECT COUNT(*) from comment""")
+comments_count = cur.fetchone()[0]
+
+sys.stderr.write(' '.join(["Persons:", str(persons_count), "Tags:", str(tags_count),
+"Posts:", str(posts_count), "Comments:", str(comments_count)]) + '\n')
+
+sys.stderr.write("Querying all posts and content for each tag\n")
 
 start = time.time()
-sys.stderr.write("Querying\n")
-for tag_id in tag_ids: 
+# iterate over all tags
+tags_cur.execute("""SELECT name from tag""")
+# we pretend that tag name is the only thing we have to begin with
+for (cur_tag_name,) in tags_cur:
+	# query to get posts that include current tag
+	# making sure I got all info for each post
+	# make a list of dicts where each dict contains post contents
+	cur.execute("""
+		SELECT post.post_id, post.body, person.name, person.picture, tag.tag_id, tag.name, tag.description, comment.comment_id, comment.body
+		FROM post
+		INNER JOIN person ON (post.author = person.person_id)
+		LEFT JOIN post_tag ON (post.post_id = post_tag.post_id)
+		INNER JOIN tag ON (post_tag.tag_id = tag.tag_id)
+		LEFT JOIN comment ON (post.post_id = comment.post)
+		WHERE post.post_id IN (
+			SELECT post.post_id
+			FROM post
+			INNER JOIN post_tag ON (post.post_id = post_tag.post_id)
+			INNER JOIN tag ON (post_tag.tag_id = tag.tag_id)
+			WHERE tag.name = %(cur_tag_name)s
+		)
+	""", {'cur_tag_name': cur_tag_name})
 
-	# join for tag queries
-	cur.execute("""SELECT post.* FROM post 
-		INNER JOIN post_tag 
-		ON (post.post_id = post_tag.post_id) 
-		WHERE post_tag.tag_id = """ + str(tag_id[0]) + ';')
-	posts = cur.fetchall()
+	last_post_id = None
+	seen_posts = set()
+	seen_tags = set()
+	seen_comments = set()
 
-	comments = []
-	tags = []
-	authors = []
+	tp_contents = []
+	for (post_id, post_body, author_name, author_picture, tag_id, tag_name, tag_description, comment_id, comment_body) in cur:
+		if post_id not in seen_posts:
+			seen_posts.add(post_id)
+			seen_tags = set()
+			seen_comments = set()
+			tp_contents.append({
+				"body": post_body,
+				"comments": [],
+				"author_name": author_name,
+				"author_picture": author_picture,
+				"tags_name": [],
+				"tags_description": []
+				})
+		else:
+			# assumption is that rows are ordered so that all equal post_id are together
+			assert last_post_id == post_id
+		last_post_id = post_id
 
-	# for each post, make queries for comments, author, and tags
-	for post in posts: 
-		#import pdb; pdb.set_trace()
-		post_id = post[0]
+		if tag_id not in seen_tags:
+			seen_tags.add(tag_id)
+			tp_contents[-1]["tags_name"].append(tag_name)
+			tp_contents[-1]["tags_description"].append(tag_description)
 
-		cur.execute("""SELECT comment.body
-			FROM comment 
-			WHERE post = """ + str(post_id) + ';')
-		post_comments = cur.fetchall()
-		comments.append(post_comments)
-
-		cur.execute("""SELECT person.name, person.picture
-			FROM person 
-			WHERE person.person_id = """ + str(post[2]) + ';')
-		post_author = cur.fetchall()
-		authors.append(post_author[0])
-
-		cur.execute("""SELECT tag.name
-			FROM tag 
-			INNER JOIN post_tag
-			ON (tag.tag_id = post_tag.tag_id) 
-			WHERE post_tag.post_id = """ + str(post_id) + ';')
-		post_tags = cur.fetchall()
-		tags.append(post_tags)
-
-	# showing we have all the info
-	out = []
-	for i in range(len(posts)): 
-		out.append({
-			'body': posts[i][1],
-			'comments': [c[0] for c in comments[i]],
-			'tags': [t[0] for t in tags[i]],
-			'author_name': authors[i][0],
-			'author_pic': authors[i][1]
-			})
+		if comment_id not in seen_comments:
+			seen_comments.add(comment_id)
+			tp_contents[-1]["comments"].append(comment_body)
 
 print time.time()-start
 
-conn.commit()
+tags_cur.close()
 cur.close()
 conn.close()
