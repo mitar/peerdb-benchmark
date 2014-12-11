@@ -23,38 +23,37 @@ def main(args):
 	NUMBER_OF_TAGS_PER_POST = param['NUMBER']['TAGS_PER_POST']
 	NUMBER_OF_COMMENTS = param['NUMBER']['COMMENTS']
 
-	PERSON_NAME = char_generator(param['SIZE']['PERSON_NAME'])
-	PERSON_BIO = char_generator(param['SIZE']['PERSON_BIO'])
-	PERSON_PICTURE = char_generator(param['SIZE']['PERSON_PICTURE'])
-	TAG_NAME = char_generator(param['SIZE']['TAG_NAME'])
-	TAG_DESCRIPTION = char_generator(param['SIZE']['TAG_DESCRIPTION'])
-	POST_BODY = char_generator(param['SIZE']['POST_BODY'])
-	COMMENT_BODY = char_generator(param['SIZE']['COMMENT_BODY'])
+	PERSON_NAME_SIZE = param['SIZE']['PERSON_NAME']
+	PERSON_BIO_SIZE = param['SIZE']['PERSON_BIO']
+	PERSON_PICTURE_SIZE = param['SIZE']['PERSON_PICTURE']
+	TAG_NAME_SIZE = param['SIZE']['TAG_NAME']
+	TAG_DESCRIPTION_SIZE = param['SIZE']['TAG_DESCRIPTION']
+	POST_BODY_SIZE = param['SIZE']['POST_BODY']
+	COMMENT_BODY_SIZE = param['SIZE']['COMMENT_BODY']
 
-	conn=psycopg2.connect(config.DATABASE_INFO)
+	conn = psycopg2.connect(config.DATABASE_INFO)
 	cur = conn.cursor()
 	
 	print "Adding", NUMBER_OF_PERSONS, "persons"
 
 	persons = []
 	for person in range(NUMBER_OF_PERSONS): 
-		# TODO: Add picture
 		persons.append({
-			"name": PERSON_NAME, 
-			"bio": PERSON_BIO,
-			"picture": PERSON_PICTURE
+			"name": char_generator(PERSON_NAME_SIZE),
+			"bio": char_generator(PERSON_BIO_SIZE),
+			"picture": char_generator(PERSON_PICTURE_SIZE)
 			})
-	cur.executemany("""INSERT INTO person(name, bio, picture) VALUES (%(name)s, %(bio)s, %(picture)s)""", tuple(persons))
+	cur.executemany("""INSERT INTO person(name, bio, picture) VALUES (%(name)s, %(bio)s, %(picture)s)""", persons)
 
 	print "Adding", NUMBER_OF_TAGS, "tags"
 
 	tags = []
 	for i in range(NUMBER_OF_TAGS): 
 		tags.append({
-			"name": TAG_NAME,
-			"description": TAG_DESCRIPTION
+			"name": char_generator(TAG_NAME_SIZE),
+			"description": char_generator(TAG_DESCRIPTION_SIZE)
 			})
-	cur.executemany("""INSERT INTO tag(name, description) VALUES (%(name)s, %(description)s)""", tuple(tags))
+	cur.executemany("""INSERT INTO tag(name, description) VALUES (%(name)s, %(description)s)""", tags)
 
 	print "Getting person ID's so far" 
 	cur.execute("""SELECT person_id from person""")
@@ -66,15 +65,15 @@ def main(args):
 	tag_ids = cur.fetchall()
 	print "First 5 tag ID's", tag_ids[:5]
 
-	print "Adding", NUMBER_OF_POSTS,"posts"
+	print "Adding", NUMBER_OF_POSTS, "posts"
 
 	posts = []
 	for i in range(NUMBER_OF_POSTS): 
 		posts.append({
 			'author': random.choice(person_ids),
-			'body': POST_BODY
+			'body': char_generator(POST_BODY_SIZE)
 			})
-	cur.executemany("""INSERT INTO post(author, body) VALUES (%(author)s, %(body)s)""", tuple(posts))
+	cur.executemany("""INSERT INTO post(author, body) VALUES (%(author)s, %(body)s)""", posts)
 
 	print "Getting post ID's so far" 
 	cur.execute("""SELECT post_id from post""")
@@ -92,26 +91,30 @@ def main(args):
 				'post_id': post_id, 
 				'tag_id': tag_id
 				})
-	cur.executemany("""INSERT INTO post_tag(post_id, tag_id) VALUES (%(post_id)s, %(tag_id)s)""", tuple(post_tags))
+	cur.executemany("""INSERT INTO post_tag(post_id, tag_id) VALUES (%(post_id)s, %(tag_id)s)""", post_tags)
 
 	print "Adding", NUMBER_OF_COMMENTS, "comments"
 
 	comments = []
 	for i in range(NUMBER_OF_COMMENTS): 
 		comments.append({
-			"body": COMMENT_BODY,
+			"body": char_generator(COMMENT_BODY_SIZE),
+			# TODO: We should use here some long-tail distribution (20% of posts has 80% of comments)
 			"post": random.choice(post_ids)
 			})
-	cur.executemany("""INSERT INTO comment(body, post) VALUES (%(body)s, %(post)s)""", tuple(comments))
+	cur.executemany("""INSERT INTO comment(body, post) VALUES (%(body)s, %(post)s)""", comments)
 
-	print "Done!"
+	print "Getting comment ID's so far"
+	cur.execute("""SELECT comment_id from comment""")
+	comment_ids = cur.fetchall()
+	print "First 5 comment ID's", comment_ids[:5]
+
+	print "Confirming things inserted:", \
+		len(person_ids), len(tag_ids), len(post_ids), len(comment_ids)
 
 	conn.commit()
 	cur.close()
 	conn.close()
 
-
 if __name__ == '__main__':
 	main(sys.argv[1:])
-
-
