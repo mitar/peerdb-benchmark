@@ -24,7 +24,8 @@ class Command(BaseCommand):
 		# we pretend that tag name is the only thing we have to begin with
 		for cur_tag_name in Tag.objects.all().values_list('name', flat=True):
 			tp_contents = []
-			for post in Post.objects.filter(tags__name__exact=cur_tag_name):
+			# TODO: Is this really the best we can do? It is still 10x slower than manual query.
+			for post in Post.objects.filter(tags__name__exact=cur_tag_name).select_related('author').prefetch_related('tags', 'comments'):
 				tp_contents.append({
 					'body': post.body,
 					'comments': [comment.body for comment in post.comments.all()],
