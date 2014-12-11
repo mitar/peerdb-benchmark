@@ -18,15 +18,13 @@ def main(args):
 		print "Current file is", json_fn.split('/')[-1]
 
 		print "Populating"
-		with open(os.devnull, 'w') as FNULL:
-			t = sbp.check_output(['python', ABSOLUTE_PATH+'populate.py', json_fn], stderr=FNULL)
+		t = sbp.check_output(['python', ABSOLUTE_PATH+'populate.py', json_fn], stderr=sys.stderr)
 
 		with open(populate_out_fn, "a") as populate_file:
 			populate_file.write(json_fn + ' ' + str(t))
 
 		print "Querying"
-		with open(os.devnull, 'w') as FNULL:
-			t = sbp.check_output(['python', ABSOLUTE_PATH+'query.py'], stderr=FNULL)
+		t = sbp.check_output(['python', ABSOLUTE_PATH+'query.py'], stderr=sys.stderr)
 
 		with open(query_out_fn, "a") as query_file:
 			query_file.write(json_fn + ' ' + str(t))
