@@ -3,7 +3,7 @@ import config
 import time
 import sys
 
-conn=psycopg2.connect(config.DATABASE_INFO)
+conn = psycopg2.connect(config.DATABASE_INFO)
 tags_cur = conn.cursor()
 cur = conn.cursor()
 
