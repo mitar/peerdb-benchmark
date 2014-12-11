@@ -28,7 +28,7 @@ def main(args):
 				in_json["SIZE"][var] = value
 
 			# save json for each value with all relevant variables changed
-			out_file = open(out_path + str(var_type.lower()) + '_' + str(value) + '.json', 'w')
+			out_file = open(out_path + str(var_type.lower()) + '_' + ("%05d" % value) + '.json', 'w')
 			json.dump(in_json, out_file)
 			out_file.close()
 
@@ -36,15 +36,19 @@ def main(args):
 		var_to_change = ["POSTS", "TAGS", "PERSONS", "COMMENTS", "TAGS_PER_POST"]
 
 		for value in values: 
-			
+
 			for var in var_to_change: 
 				# multiply each variable by the given value
 				in_json['NUMBER'][var] = in_json['NUMBER'][var]*value
 
 			# save json for each value with all relevant variables changed
-			out_file = open(out_path + str(var_type.lower()) + '_' + str(value) + '.json', 'w')
+			out_file = open(out_path + str(var_type.lower()) + '_' + ("%05d" % value) + '.json', 'w')
 			json.dump(in_json, out_file)
 			out_file.close()
+
+			for var in var_to_change:
+				# restore the value for each variable
+				in_json['NUMBER'][var] = in_json['NUMBER'][var]/value
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
