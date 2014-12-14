@@ -1,21 +1,21 @@
 Future = Npm.require 'fibers/future'
 
-NUMBER_OF_PERSONS = Meteor.settings['NUMBER']['PERSONS']
-NUMBER_OF_TAGS = Meteor.settings['NUMBER']['TAGS']
-NUMBER_OF_POSTS = Meteor.settings['NUMBER']['POSTS']
-NUMBER_OF_TAGS_PER_POST = Meteor.settings['NUMBER']['TAGS_PER_POST']
-NUMBER_OF_COMMENTS = Meteor.settings['NUMBER']['COMMENTS']
+NUMBER_OF_PERSONS = Meteor.settings['NUMBER']?['PERSONS']
+NUMBER_OF_TAGS = Meteor.settings['NUMBER']?['TAGS']
+NUMBER_OF_POSTS = Meteor.settings['NUMBER']?['POSTS']
+NUMBER_OF_TAGS_PER_POST = Meteor.settings['NUMBER']?['TAGS_PER_POST']
+NUMBER_OF_COMMENTS = Meteor.settings['NUMBER']?['COMMENTS']
 
-PERSON_NAME_SIZE = Meteor.settings['SIZE']['PERSON_NAME']
-PERSON_BIO_SIZE = Meteor.settings['SIZE']['PERSON_BIO']
-PERSON_PICTURE_SIZE = Meteor.settings['SIZE']['PERSON_PICTURE']
-TAG_NAME_SIZE = Meteor.settings['SIZE']['TAG_NAME']
-TAG_DESCRIPTION_SIZE = Meteor.settings['SIZE']['TAG_DESCRIPTION']
-POST_BODY_SIZE = Meteor.settings['SIZE']['POST_BODY']
-COMMENT_BODY_SIZE = Meteor.settings['SIZE']['COMMENT_BODY']
+PERSON_NAME_SIZE = Meteor.settings['SIZE']?['PERSON_NAME']
+PERSON_BIO_SIZE = Meteor.settings['SIZE']?['PERSON_BIO']
+PERSON_PICTURE_SIZE = Meteor.settings['SIZE']?['PERSON_PICTURE']
+TAG_NAME_SIZE = Meteor.settings['SIZE']?['TAG_NAME']
+TAG_DESCRIPTION_SIZE = Meteor.settings['SIZE']?['TAG_DESCRIPTION']
+POST_BODY_SIZE = Meteor.settings['SIZE']?['POST_BODY']
+COMMENT_BODY_SIZE = Meteor.settings['SIZE']?['COMMENT_BODY']
 
 # This timeout should be subtracted when timing the full wait period.
-WAIT_FOR_DATABASE_TIMEOUT = 3000 # ms
+WAIT_FOR_DATABASE_TIMEOUT = 6000 # ms
 
 observerCallbackCalledCount = 0
 observerCallbackCalledFutures = []
