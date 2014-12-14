@@ -31,7 +31,8 @@ for tag in tags.find({}, {'name': 1}):
 	for post in posts.find({'tags.name': tag_name}, {'body': 1, 'comments.body': 1, 'author.name': 1, 'author.picture': 1, 'tags.name': 1, 'tags.description' : 1}):
 		tp_contents.append({
 			"body": post['body'],
-			"comments": [comment['body'] for comment in post['comments']],
+			# TODO: Why it sometimes does not sync the comments?
+			"comments": [comment.get('body', '') for comment in post.get('comments', [])],
 			"author_name": post['author']['name'],
 			"author_picture": post['author']['picture'],
 			"tags_name": [tag['name'] for tag in post['tags']],
