@@ -1,7 +1,7 @@
 Future = Npm.require 'fibers/future'
 
 # This timeout should be subtracted when timing the full wait period.
-WAIT_FOR_DATABASE_TIMEOUT = 6000 # ms
+WAIT_FOR_DATABASE_TIMEOUT = 60000 # ms
 
 observerCallbackCalledCount = 0
 observerCallbackCalledFutures = []
@@ -133,6 +133,9 @@ Meteor.methods
     callbackCount = Meteor.call 'reset-observe-callback-count'
 
     console.log "#{ callbackCount } PeerDB updates made"
+
+    # There should be at least one update per post (in fact more like three)
+    assert callbackCount > NUMBER_OF_POSTS
 
     endTime = new Date().valueOf()
     [
