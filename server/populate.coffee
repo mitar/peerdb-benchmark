@@ -125,14 +125,20 @@ Meteor.methods
 
     console.log "Done"
 
+    writeTime = new Date().valueOf()
+
     Meteor.call 'wait-for-database'
 
     callbackCount = Meteor.call 'reset-observe-callback-count'
 
     console.log "#{ callbackCount } PeerDB updates made"
 
-    # We subtract WAIT_FOR_DATABASE_TIMEOUT, an overhead made by wait-for-database.
-    (new Date().valueOf() - start - WAIT_FOR_DATABASE_TIMEOUT) / 1000
+    endTime = new Date().valueOf()
+    [
+      (writeTime - start) / 1000
+      # We subtract WAIT_FOR_DATABASE_TIMEOUT, an overhead made by wait-for-database.
+      (endTime - start - WAIT_FOR_DATABASE_TIMEOUT) / 1000
+    ]
 
   'collections-populate-database': ->
     console.log "Cleaning the database"
