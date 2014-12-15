@@ -27,8 +27,8 @@ def random_objects(objects, object_ids, fields, n):
 def random_id():
 	return char_generator(17)
 
-def main(args): 
-	if not args: 
+def main(args):
+	if not args:
 		sys.stderr.write("Supply parameter json file\n")
 		exit(-1)
 
@@ -105,7 +105,7 @@ def main(args):
 	sys.stderr.write("Adding "+str(NUMBER_OF_TAGS)+" tags\n")
 
 	tags = []
-	for i in range(NUMBER_OF_TAGS): 
+	for i in range(NUMBER_OF_TAGS):
 		tags.append({
 			"_id": random_id(),
 			"name": char_generator(TAG_NAME_SIZE),
@@ -116,7 +116,7 @@ def main(args):
 	sys.stderr.write("Adding "+str(NUMBER_OF_POSTS)+" posts\n")
 
 	posts = []
-	for i in range(NUMBER_OF_POSTS): 
+	for i in range(NUMBER_OF_POSTS):
 		posts.append({
 			'_id': random_id(),
 			'author': random_objects(persons, person_ids, ['name', 'picture'], 1)[0],
@@ -128,7 +128,7 @@ def main(args):
 	sys.stderr.write("Adding "+str(NUMBER_OF_COMMENTS)+" comments\n")
 
 	comments = []
-	for i in range(NUMBER_OF_COMMENTS): 
+	for i in range(NUMBER_OF_COMMENTS):
 		comments.append({
 			"_id": random_id(),
 			"body": char_generator(COMMENT_BODY_SIZE),
@@ -149,12 +149,16 @@ def main(args):
 		sys.stderr.write("Meteor error: " + str(result_message.error) + '\n')
 		return
 	else:
-		sys.stderr.write(str(result_message.result) + " PeerDB updates made\n")
+		callback_count = result_message.result
+		sys.stderr.write(str(callback_count) + " PeerDB updates made\n")
+
+	# there should be at least one update per post (in fact more like three)
+	assert callback_count > NUMBER_OF_POSTS
 
 	end_time = time.time()
 
-	# we subtract 6 seconds, an overhead made by wait-for-database
-	print write_time - start, end_time - start - 6
+	# we subtract 60 seconds, an overhead made by wait-for-database
+	print write_time - start, end_time - start - 60
 
 	sys.stderr.write("Disconnecting from Meteor (this might take quite some time, feel free to kill the program)\n")
 
