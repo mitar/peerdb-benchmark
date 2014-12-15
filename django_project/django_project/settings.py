@@ -58,7 +58,7 @@ DATABASES = {
         'NAME': 'django_db',
         'USER': 'postgres',
         'PASSWORD': '', 
-        'HOST': 'localhost'
+        'HOST': '127.0.0.1'
     }
 }
 
