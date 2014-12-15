@@ -2,8 +2,8 @@ Meteor.methods
   'peerdb-query-database': ->
     console.log "Checking collection counts"
 
-    console.log "Persons: #{ Person.documents.count() }, Tags: #{ Tag.documents.count() }" +
-      ", Posts: #{ Post.documents.count() }, Comments: #{ Comment.documents.count() }"
+    console.log "Persons: #{ Person.documents.find().count() }, Tags: #{ Tag.documents.find().count() }" +
+      ", Posts: #{ Post.documents.find().count() }, Comments: #{ Comment.documents.find().count() }"
 
     console.log "Querying all posts and content for each tag"
 
@@ -30,8 +30,8 @@ Meteor.methods
   'collections-query-database': ->
     console.log "Checking collection counts"
 
-    console.log "Persons: #{ personsCollection.count() }, Tags: #{ tagsCollection.count() }" +
-      ", Posts: #{ postsCollection.count() }, Comments: #{ commentsCollection.count() }"
+    console.log "Persons: #{ personsCollection.find().count() }, Tags: #{ tagsCollection.find().count() }" +
+      ", Posts: #{ postsCollection.find().count() }, Comments: #{ commentsCollection.find().count() }"
 
     console.log "Querying all posts and content for each tag"
 
