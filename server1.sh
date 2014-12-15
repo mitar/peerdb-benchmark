@@ -10,7 +10,7 @@ docker exec -d postgresql-python-only bash -c \
 
 docker run -d --name postgresql-python-django mitar/peerdb-benchmark
 sleep 30
-docker exec -d postgresql-python-only bash -c \
+docker exec -d postgresql-python-django bash -c \
   "cd /benchmark/peerdb-benchmark-postgresql-python/django_project/; \
   python /benchmark/peerdb-benchmark-postgresql-python/django_project/benchmark.py /benchmark/jsons/ /benchmark/write.file /benchmark/read.file >>/benchmark/log 2>&1;"
 
