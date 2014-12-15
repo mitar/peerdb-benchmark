@@ -19,7 +19,7 @@ def main(args):
 
 	meteor.start()
 
-	for json_fn in json_fns:
+	for json_fn in sorted(json_fns):
 		print "Current file is", json_fn.split('/')[-1]
 
 		print "Populating"
