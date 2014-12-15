@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+docker pull mitar/peerdb-benchmark
+
 for I in 2 4 6 8 10; do
   docker run -d --name "mongodb-python-peerdb-$I" mitar/peerdb-benchmark
   sleep 20

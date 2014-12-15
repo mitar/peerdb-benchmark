@@ -1,5 +1,7 @@
 #!/bin/bash -e
 
+docker pull mitar/peerdb-benchmark
+
 docker run -d --name postgresql-python-only mitar/peerdb-benchmark
 sleep 20
 docker exec -d postgresql-python-only bash -c \
