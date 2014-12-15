@@ -1,8 +1,8 @@
 #!/bin/bash -e
 
-# In "build" subdirectory app should be build to:
-# meteor build ./build --directory
-cd build
+# In "bundle" subdirectory app should be build to:
+# meteor build . --directory
+cd bundle
 
 NODE=$(find /root/.meteor/ -path '*bin/node')
 
