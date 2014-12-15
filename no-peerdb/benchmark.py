@@ -2,7 +2,7 @@ import subprocess as sbp
 import os
 import sys
 
-ABSOLUTE_PATH = "/Users/apavel/code/mongo-python/peerdb-benchmark/no-peerdb/"
+ABSOLUTE_PATH = "/benchmark/peerdb-benchmark-mongodb-python/no-peerdb/"
 
 def main(args): 
 	if len(args) < 3: 
