@@ -1,3 +1,3 @@
 DATABASE_NAME = 'meteor'
-DATABASE_LOCATION = 'mongodb://localhost:27017/'
-METEOR_LOCATION = 'ws://localhost:3000/websocket'
+DATABASE_LOCATION = 'mongodb://127.0.0.1:27017/'
+METEOR_LOCATION = 'ws://127.0.0.1:3000/websocket'

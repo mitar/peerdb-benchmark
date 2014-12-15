@@ -1,2 +1,2 @@
 DATABASE_NAME = 'nopeerdb'
-DATABASE_LOCATION = 'mongodb://localhost:27017/'
+DATABASE_LOCATION = 'mongodb://127.0.0.1:27017/'
