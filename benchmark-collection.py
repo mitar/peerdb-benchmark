@@ -3,7 +3,7 @@ import sys
 import ddp
 
 ABSOLUTE_PATH = "/Users/apavel/code/mongo-meteor/peerdb-benchmark/"
-METEOR_LOCATION = "ws://127.0.0.1:3000/websocket"
+METEOR_LOCATION = "ws://localhost:3000/websocket"
 
 def main(args): 
 	if len(args) < 3: 
