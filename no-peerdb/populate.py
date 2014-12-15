@@ -105,7 +105,7 @@ def main(args):
 
 	print time.time()-start
 
-	sys.stderr.write("Done")
+	sys.stderr.write("Done\n")
 
 if __name__ == '__main__':
 	main(sys.argv[1:])
