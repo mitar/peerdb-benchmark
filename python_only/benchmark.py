@@ -14,7 +14,7 @@ def main(args):
 
 	json_fns = [json_path + fn for fn in os.listdir(json_path) if '.json' in fn]
 
-	for json_fn in json_fns:
+	for json_fn in sorted(json_fns):
 		print "Current file is", json_fn.split('/')[-1]
 
 		sbp.call(['python', ABSOLUTE_PATH+'create_tables.py'])
