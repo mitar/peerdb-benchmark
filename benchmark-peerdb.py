@@ -1,6 +1,7 @@
 import os
 import sys
 import ddp
+import json
 
 METEOR_LOCATION = "ws://127.0.0.1:3000/websocket"
 
@@ -21,8 +22,12 @@ def main(args):
 	for json_fn in sorted(json_fns):
 		print "Current file is", json_fn.split('/')[-1]
 
+		f = open(json_fn)
+		settings = json.load(f)
+		f.close()
+
 		print "Populating"
-		future = meteor.call('peerdb-populate-database')
+		future = meteor.call('peerdb-populate-database', settings)
 
 		result_message = future.get()
 		if result_message.has_error():
