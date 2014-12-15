@@ -139,6 +139,8 @@ def main(args):
 			})
 	comment_ids = comment_collection.insert(comments)
 
+	write_time = time.time()
+
 	sys.stderr.write("Waiting for database\n")
 
 	future = meteor.call('wait-for-database')
@@ -149,8 +151,10 @@ def main(args):
 	else:
 		sys.stderr.write(str(result_message.result) + " PeerDB updates made\n")
 
+	end_time = time.time()
+
 	# we subtract 6 seconds, an overhead made by wait-for-database
-	print time.time() - start - 6
+	print write_time - start, end_time - start - 6
 
 	sys.stderr.write("Disconnecting from Meteor (this might take quite some time, feel free to kill the program)\n")
 
