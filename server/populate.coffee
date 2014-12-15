@@ -26,7 +26,8 @@ unless originalObserverCallback
       ret
 
 # To match the function name in other implementations.
-charGenerator = Random.secret
+charGenerator = (size) ->
+  Random.secret size
 
 # Input: ordered objects, object_ids, fields to embed besides id, n
 # Output: PeerDB compatible objects to embed
