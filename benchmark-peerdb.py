@@ -5,7 +5,7 @@ import ddp
 METEOR_LOCATION = "ws://127.0.0.1:3000/websocket"
 
 def main(args): 
-	if len(args) < 3: 
+	if len(args) < 3:
 		print "Format: benchmark.py <path to jsons> <out fn for write times> <out fn for read times>"
 		exit(-1)
 	json_path = args[0]

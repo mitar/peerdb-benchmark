@@ -22,7 +22,7 @@ def main(args):
 		print "Current file is", json_fn.split('/')[-1]
 
 		print "Populating"
-		future = meteor.call('collection-populate-database')
+		future = meteor.call('collections-populate-database')
 
 		result_message = future.get()
 		if result_message.has_error():
@@ -33,7 +33,7 @@ def main(args):
 			populate_file.write(json_fn + ' ' + str(result_message.result))
 
 		print "Querying"
-		future = meteor.call('collection-query-database')
+		future = meteor.call('collections-query-database')
 
 		result_message = future.get()
 		if result_message.has_error():

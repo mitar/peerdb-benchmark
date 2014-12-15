@@ -27,7 +27,7 @@ Meteor.methods
 
     (new Date().valueOf() - start) / 1000
 
-  'collection-query-database': ->
+  'collections-query-database': ->
     console.log "Checking collection counts"
 
     console.log "Persons: #{ personsCollection.count() }, Tags: #{ tagsCollection.count() }" +
