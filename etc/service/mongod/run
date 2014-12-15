@@ -1,0 +1,6 @@
+#!/bin/bash -e
+
+mkdir -p /var/lib/mongodb
+chown -Rh mongodb:mongodb /var/lib/mongodb
+
+exec chpst -u mongodb:mongodb /usr/bin/mongod --config /etc/mongodb.conf --replSet meteor 2>&1
