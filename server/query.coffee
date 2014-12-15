@@ -10,7 +10,7 @@ Meteor.methods
     start = new Date().valueOf()
 
     # Iterate over all tags.
-    for tag in Tag.documents.find({}, fields: {name: 1})
+    Tag.documents.find({}, fields: {name: 1}).forEach (tag) ->
       # We pretend that tag name is the only thing we have to begin with.
       tagName = tag.name
 
@@ -37,12 +37,14 @@ Meteor.methods
 
     start = new Date().valueOf()
 
-    for tag in tagsCollection.find({}, fields: {'name': 1})
+    tagsCollection.find({}, fields: {'name': 1}).forEach (tag) ->
       # We pretend that tag name is the only thing we have to begin with.
       tagName = tag['name']
 
       # Get the tag.
       tag = tagsCollection.findOne({'name': tagName}, fields: {'_id': 1})
+
+      assert tag
 
       # Query to get posts that include current tag.
       tp = postsCollection.find({'tags': tag['_id']}, fields: {'body': 1, 'author': 1, 'tags': 1}).fetch()

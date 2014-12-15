@@ -35,7 +35,7 @@ def main(args):
 			return
 
 		with open(populate_out_fn, "a") as populate_file:
-			populate_file.write(json_fn + ' ' + str(result_message.result))
+			populate_file.write(json_fn + ' ' + str(result_message.result) + '\n')
 
 		print "Querying"
 		future = meteor.call('collections-query-database')
@@ -46,7 +46,7 @@ def main(args):
 			return
 
 		with open(query_out_fn, "a") as query_file:
-			query_file.write(json_fn + ' ' + str(result_message.result))
+			query_file.write(json_fn + ' ' + str(result_message.result) + '\n')
 
 	print "Disconnecting from Meteor (this might take quite some time, feel free to kill the program)"
 

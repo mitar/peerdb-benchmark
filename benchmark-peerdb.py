@@ -37,7 +37,7 @@ def main(args):
 		(write_time, consistency_time) = result_message.result
 
 		with open(populate_out_fn, "a") as populate_file:
-			populate_file.write(json_fn + ' ' + str(write_time) + ' ' + str(consistency_time))
+			populate_file.write(json_fn + ' ' + str(write_time) + ' ' + str(consistency_time) + '\n')
 
 		print "Querying"
 		future = meteor.call('peerdb-query-database')
@@ -48,7 +48,7 @@ def main(args):
 			return
 
 		with open(query_out_fn, "a") as query_file:
-			query_file.write(json_fn + ' ' + str(result_message.result))
+			query_file.write(json_fn + ' ' + str(result_message.result) + '\n')
 
 	print "Disconnecting from Meteor (this might take quite some time, feel free to kill the program)"
 
