@@ -1,0 +1,18 @@
+{
+	"NUMBER" : {
+		"PERSONS": 100,
+		"TAGS": 100,
+		"POSTS": 1000,
+		"TAGS_PER_POST": 10,
+		"COMMENTS": 10000
+	},
+	"SIZE" : {
+		"PERSON_NAME": 11,
+		"PERSON_BIO": 1000,
+		"PERSON_PICTURE": 10,
+		"TAG_NAME": 11,
+		"TAG_DESCRIPTION": 10,
+		"POST_BODY": 1000,
+		"COMMENT_BODY": 10
+	}
+}
