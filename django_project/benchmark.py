@@ -2,7 +2,7 @@ import subprocess as sbp
 import os
 import sys
 
-ABSOLUTE_PATH = "/Users/apavel/code/postgres-python/peerdb-benchmark/django_project/"
+ABSOLUTE_PATH = "/benchmark/peerdb-benchmark-postgresql-python/django_project/"
 
 def main(args): 
 	if len(args) < 3: 

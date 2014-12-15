@@ -56,7 +56,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         # 'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
         'NAME': 'django_db',
-        'USER': 'apavel',
+        'USER': 'postgres',
         'PASSWORD': '', 
         'HOST': 'localhost'
     }

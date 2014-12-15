@@ -2,7 +2,7 @@ import subprocess as sbp
 import os
 import sys
 
-ABSOLUTE_PATH = "/Users/apavel/code/postgres-python/peerdb-benchmark/python_only/"
+ABSOLUTE_PATH = "/benchmark/peerdb-benchmark-postgresql-python/python_only/"
 
 def main(args): 
 	if len(args) < 3: 
