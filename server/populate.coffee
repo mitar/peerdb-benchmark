@@ -41,7 +41,7 @@ randomObjects = (objects, objectIds, fields, n) ->
     obj = _id: objectIds[objectI]
     for field in fields
       obj[field] = objects[objectI][field]
-    out
+    obj
 
 Meteor.methods
   'peerdb-populate-database': (settings) ->
