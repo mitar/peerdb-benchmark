@@ -1,7 +1,7 @@
 #!/bin/bash -e
 
 for I in 2 4 6 8 10; do
-  docker run -d --name "mongodb-python-peerdb-$I" peerdb-benchmark
+  docker run -d --name "mongodb-python-peerdb-$I" mitar/peerdb-benchmark
   sleep 20
   docker exec -d "mongodb-python-peerdb-$I" bash -c \
     "cd /benchmark/peerdb-benchmark-mongodb-meteor/; \
