@@ -3,4 +3,20 @@
 mkdir -p /var/lib/mongodb
 chown -Rh mongodb:mongodb /var/lib/mongodb
 
-exec chpst -u mongodb:mongodb /usr/bin/mongod --config /etc/mongodb.conf --replSet meteor 2>&1
+if [ ! -f /var/lib/mongodb/.initialized ]; then
+  touch /var/lib/mongodb/.initialized
+
+  # Temporarily start MongodDB to initialize the replica set
+  chpst -u mongodb:mongodb /usr/bin/mongod --config /etc/mongodb.conf 2>&1 &
+  MONGODB_PID=$!
+  while true; do
+    { echo 'db.runCommand({ ping: 1 })' | mongo; } && break
+    sleep 1
+  done
+
+  echo 'rs.initiate()' | mongo
+  echo 'db.shutdownServer({force: true})' | mongo admin
+  wait ${MONGODB_PID}
+fi
+
+exec numactl --interleave=all chpst -u mongodb:mongodb /usr/bin/mongod --config /etc/mongodb.conf 2>&1

@@ -1,3 +1,17 @@
 #!/bin/bash -e
 
-exec chpst -u postgres:postgres:ssl-cert /usr/lib/postgresql/9.1/bin/postgres -D /var/lib/postgresql/9.1/main -c config_file=/etc/postgresql/9.1/main/postgresql.conf 2>&1
+POSTGRES=/usr/lib/postgresql/9.3/bin/postgres
+DATADIR=/var/lib/postgresql/9.3/main
+CONFDIR=/etc/postgresql/9.3/main
+
+pgsql_command()
+{
+  local cmd="$1"
+  local db="$2"
+  chpst -u postgres:postgres:ssl-cert ${POSTGRES} --single -E -D ${DATADIR} -c config_file=${CONFDIR}/postgresql.conf ${db} <<< "${cmd}" 2>&1
+}
+
+pgsql_command "CREATE DATABASE django_db WITH OWNER postgres ENCODING 'UNICODE';" || true
+pgsql_command "CREATE DATABASE python_db WITH OWNER postgres ENCODING 'UNICODE';" || true
+
+exec chpst -u postgres:postgres:ssl-cert ${POSTGRES} -D ${DATADIR} -c config_file=${CONFDIR}/postgresql.conf 2>&1
