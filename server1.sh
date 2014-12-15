@@ -25,6 +25,7 @@ sleep 30
 docker exec -d mongodb-python-peerdb-1 bash -c \
   "cd /benchmark/peerdb-benchmark-mongodb-meteor/; \
   ./run-peerdb.sh 1 >>/benchmark/log 2>&1; \
+  sleep 10; \
   cd /benchmark/peerdb-benchmark-mongodb-python/peerdb/; \
   python /benchmark/peerdb-benchmark-mongodb-python/peerdb/benchmark.py /benchmark/jsons/ /benchmark/write.file /benchmark/read.file >>/benchmark/log 2>&1;"
 
@@ -33,6 +34,7 @@ sleep 30
 docker exec -d mongodb-meteor-collection bash -c \
   "cd /benchmark/peerdb-benchmark-mongodb-meteor/; \
   ./run-peerdb.sh 1 >>/benchmark/log 2>&1; \
+  sleep 10; \
   python /benchmark/peerdb-benchmark-mongodb-meteor/benchmark-collection.py /benchmark/jsons/ /benchmark/write.file /benchmark/read.file >>/benchmark/log 2>&1;"
 
 docker run -d --name mongodb-meteor-peerdb-1 mitar/peerdb-benchmark
@@ -40,4 +42,5 @@ sleep 30
 docker exec -d mongodb-meteor-peerdb-1 bash -c \
   "cd /benchmark/peerdb-benchmark-mongodb-meteor/; \
   ./run-peerdb.sh 1 >>/benchmark/log 2>&1; \
+  sleep 10; \
   python /benchmark/peerdb-benchmark-mongodb-meteor/benchmark-peerdb.py /benchmark/jsons/ /benchmark/write.file /benchmark/read.file >>/benchmark/log 2>&1;"
