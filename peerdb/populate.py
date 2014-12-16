@@ -158,7 +158,7 @@ def main(args):
 	end_time = time.time()
 
 	# we subtract 60 seconds, an overhead made by wait-for-database
-	print write_time - start, end_time - start - 60
+	print write_time - start, end_time - start - 60, callback_count
 
 	sys.stderr.write("Disconnecting from Meteor (this might take quite some time, feel free to kill the program)\n")
 
