@@ -34,10 +34,10 @@ def main(args):
 			print "Meteor error: " + str(result_message.error)
 			return
 
-		(write_time, consistency_time) = result_message.result
+		(write_time, consistency_time, callback_count) = result_message.result
 
 		with open(populate_out_fn, "a") as populate_file:
-			populate_file.write(json_fn + ' ' + str(write_time) + ' ' + str(consistency_time) + '\n')
+			populate_file.write(json_fn + ' ' + str(write_time) + ' ' + str(consistency_time) + ' ' + str(callback_count) + '\n')
 
 		print "Querying"
 		future = meteor.call('peerdb-query-database')

@@ -142,6 +142,7 @@ Meteor.methods
       (writeTime - start) / 1000
       # We subtract WAIT_FOR_DATABASE_TIMEOUT, an overhead made by wait-for-database.
       (endTime - start - WAIT_FOR_DATABASE_TIMEOUT) / 1000
+      callbackCount
     ]
 
   'collections-populate-database': (settings) ->
