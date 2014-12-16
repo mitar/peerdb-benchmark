@@ -134,7 +134,8 @@ Meteor.methods
 
     console.log "#{ callbackCount } PeerDB updates made"
 
-    # There should be at least one update per post (in fact more like three)
+    # There should be at least one update per post (in fact more like 3 * NUMBER_OF_COMMENTS)
+    # TODO: Why not all updates are always made? Can we compute a strict number of them which had to be done and compare?
     assert callbackCount > NUMBER_OF_POSTS
 
     endTime = new Date().valueOf()
