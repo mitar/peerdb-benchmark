@@ -152,7 +152,8 @@ def main(args):
 		callback_count = result_message.result
 		sys.stderr.write(str(callback_count) + " PeerDB updates made\n")
 
-	# there should be at least one update per post (in fact more like three)
+	# there should be at least one update per post (in fact more like 3 * NUMBER_OF_COMMENTS)
+	# TODO: Why not all updates are always made? Can we compute a strict number of them which had to be done and compare?
 	assert callback_count > NUMBER_OF_POSTS
 
 	end_time = time.time()
