@@ -1,25 +1,28 @@
 This branch consists of Python programs:
  * to populate MongoDB database
-   * with PeerDB help
-   * without PeerDB help
+   * with PeerDB help (`peerdb/populate.py`)
+   * without PeerDB help (`no-peerdb/populate.py`)
  * to read from MongoDB database
    * using recursive MongoDB queries
-     * reading related documents iteratively
-     * TODO: reading related documents in bulk
-   * using embedded documents made by PeerDB
+     * (TBD) reading related documents iteratively, storing minimal set of documents in memory
+     * reading related documents in bulk, storing all documents in memory and reconstructing them (`no-peerdb/query.py`)
+   * using embedded documents made by PeerDB (`peerdb/query.py`)
 
 How to make it work: 
-* Modify config.py in no-peerdb/ to mongodb without peerdb
-  * change DATABASE_NAME
-  * change DATABASE_LOCATION
-* Modify config.py in peerdb/ to mongodb with peerdb 
-  * change DATABASE_NAME
-  * change DATABASE_LOCATION
+* Modify `config.py` in `no-peerdb/` to MongoDB database without PeerDB running
+  * change `DATABASE_NAME`
+  * change `DATABASE_LOCATION`
+* Modify `config.py` in `peerdb/` to MongoDB database with PeerDB running 
+  * change `DATABASE_NAME`
+  * change `DATABASE_LOCATION`
 * To populate database: 
-  * No peerdb: python no-peerdb/populate.py <path to parameter json>
-  * With peerdb: python peerdb/populate.py <path to parameter json>
-  * sample parameter json saved as "sample_parameters.json"
-* To query database (only iterative reading for now)
-  * No peerdb: python no-peerdb/query.py
-  * With peerdb: python peerdb/query.py
-* The query.py's aggregate content of all posts for each tag but do not output this data
+  * No PeerDB: `python no-peerdb/populate.py <path to parameter json>`
+  * With PeerDB: `python peerdb/populate.py <path to parameter json>`
+  * sample parameter json and programs to generate more of them are available in `master` branch
+* To query database
+  * No PeerDB: `python no-peerdb/query.py`
+  * With PeerDB: `python peerdb/query.py`
+
+The queries aggregate content of all posts for each tag name but do not output this data.
+
+`benchmark.py` scripts conveniently run both populate and query for all JSON files in a directory.
