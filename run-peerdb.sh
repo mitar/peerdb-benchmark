@@ -18,5 +18,5 @@ else
 fi
 
 for I in $(seq 1 $PEERDB_INSTANCES); do
-  PEERDB_INSTANCE="$((I-1))" PORT="$((2900 + 100 * I))" ROOT_URL="http://127.0.0.1:$((2900 + 100 * I))" "$NODE" main.js &
+  PEERDB_INSTANCE="$((I-1))" PORT="$((2900 + 100 * I))" ROOT_URL="http://127.0.0.1:$((2900 + 100 * I))" "$NODE" --max-old-space-size=8192 main.js &
 done
