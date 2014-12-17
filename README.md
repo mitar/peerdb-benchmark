@@ -21,6 +21,6 @@ All benchmarks together are available as a Docker image, with MongoDB and Postgr
 
 * `server1.sh` runs multiple Docker instances for all benchmarks with PeerDB having only one instance
 * `server2.sh` runs only MongoDB Python PeerDB multiple Docker instances for multiple PeerDB instances: 2, 4, 6, 8, and 10
- * `server3.sh` runs only MongoDB Meteor PeerDB multiple Docker instances for multiple PeerDB instances: 2, 4, 6, 8, and 10
+* `server3.sh` runs only MongoDB Meteor PeerDB multiple Docker instances for multiple PeerDB instances: 2, 4, 6, 8, and 10
 
 `collect.py` script connects to all Docker instances and reads `read.file` and `write.file` outputs.
