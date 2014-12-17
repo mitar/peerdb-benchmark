@@ -7,7 +7,7 @@ cd bundle
 NODE=$(find /root/.meteor/ -path '*bin/node')
 
 export NODE_PATH="$(dirname $(dirname "$NODE"))/lib/node_modules"
-export NODE_ENV="PRODUCTION"
+export NODE_ENV="production"
 export MONGO_URL="mongodb://127.0.0.1:27017/meteor"
 export MONGO_OPLOG_URL="mongodb://127.0.0.1:27017/local"
 
