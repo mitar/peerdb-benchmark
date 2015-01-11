@@ -4,7 +4,7 @@
 # meteor build . --directory
 cd bundle
 
-NODE=$(find /root/.meteor/ -path '*bin/node')
+NODE=$(find /root/.meteor/ -path '*bin/node' | sort | tail -n 1)
 
 export NODE_PATH="$(dirname $(dirname "$NODE"))/lib/node_modules"
 export NODE_ENV="production"
