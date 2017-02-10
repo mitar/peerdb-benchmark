@@ -3,6 +3,8 @@ FROM tozd/runit
 EXPOSE 27017/tcp
 EXPOSE 5432/tcp
 
+ENV METEOR_ALLOW_SUPERUSER=true
+
 RUN apt-get update -q -q
 RUN locale-gen --no-purge en_US.UTF-8
 RUN update-locale LANG=en_US.UTF-8
